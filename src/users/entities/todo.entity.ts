@@ -13,12 +13,15 @@ export class Todo {
   @Column()
   description: string;
 
-  @Column({ default: Status.IN_PROGRESS })
+  @Column({
+    default: Status.IN_PROGRESS,
+    enum: [Status.DOING, Status.DONE, Status.IN_PROGRESS],
+    enumName: 'Status',
+  })
   status: Status;
 
-  @ManyToOne(() => User, (user) => user.todos)
+  @ManyToOne(() => User, (user) => user.todos, { cascade: true })
   user: User;
 
-  @Column()
   userId: number;
 }

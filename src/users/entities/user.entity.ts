@@ -8,13 +8,13 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Column()
   password: string;
 
-  @OneToMany(() => Todo, (todo) => todo.userId)
+  @OneToMany(() => Todo, (todo) => todo.user)
   todos: Todo[];
 
   @Column({ nullable: true })
