@@ -20,7 +20,11 @@ export class Todo {
   })
   status: Status;
 
-  @ManyToOne(() => User, (user) => user.todos, { cascade: true })
+  @ManyToOne(() => User, (user) => user.todos, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   user: User;
 
   userId: number;
