@@ -17,6 +17,6 @@ export class User {
   @OneToMany(() => Todo, (todo) => todo.user)
   todos: Todo[];
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 300 })
   refreshToken: string;
 }

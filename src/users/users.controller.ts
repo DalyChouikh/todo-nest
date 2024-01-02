@@ -15,6 +15,7 @@ import {
   UpdateTodoDto,
   UpdateUserDto,
 } from './dto';
+import { Public } from 'src/common/decorators';
 
 @Controller('users')
 export class UsersController {

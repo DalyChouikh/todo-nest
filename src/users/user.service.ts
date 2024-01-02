@@ -20,7 +20,7 @@ export class UserService {
 
   async findAllUsers() {
     return await this.userRepository.find({
-      relations: ['todos'],
+      relations: { todos: true },
     });
   }
 
@@ -32,8 +32,10 @@ export class UserService {
 
   async createTodo(id: string, createTodoDto: CreateTodoDto) {
     const user = await this.userRepository.findOneBy({ id: +id });
-    const todo = this.todoRepository.create({ ...createTodoDto, user });
-    return this.todoRepository.save(todo);
+    if (!user) throw new NotFoundException('User Not Found');
+    const todo = await this.todoRepository.create({ ...createTodoDto, user });
+    await this.todoRepository.save(todo);
+    return todo;
   }
 
   async findUserById(id: string) {

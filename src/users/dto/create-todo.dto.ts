@@ -8,6 +8,7 @@ import {
 import { Status } from '../entities/status.enum';
 
 export class CreateTodoDto {
+  @IsNotEmpty()
   @IsString()
   @MinLength(8)
   title: string;
