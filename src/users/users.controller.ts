@@ -9,13 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import {
-  CreateTodoDto,
-  CreateUserDto,
-  UpdateTodoDto,
-  UpdateUserDto,
-} from './dto';
-import { Public } from 'src/common/decorators';
+import { CreateTodoDto, UpdateTodoDto, UpdateUserDto } from './dto';
 
 @Controller('users')
 export class UsersController {
@@ -24,11 +18,6 @@ export class UsersController {
   @Get()
   findAllUsers() {
     return this.userService.findAllUsers();
-  }
-
-  @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
   }
 
   @Post(':id')

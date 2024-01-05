@@ -3,13 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { ILike, Repository } from 'typeorm';
 import { Todo } from './entities/todo.entity';
-import {
-  CreateTodoDto,
-  CreateUserDto,
-  UpdateTodoDto,
-  UpdateUserDto,
-} from './dto';
+import { CreateTodoDto, UpdateTodoDto, UpdateUserDto } from './dto';
 import { hash } from 'bcrypt';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -19,15 +15,10 @@ export class UserService {
   ) {}
 
   async findAllUsers() {
-    return await this.userRepository.find({
+    const users: User[] = await this.userRepository.find({
       relations: { todos: true },
     });
-  }
-
-  async createUser(createUserDto: CreateUserDto) {
-    createUserDto.password = await hash(createUserDto.password, 10);
-    const user = this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+    return instanceToPlain(users);
   }
 
   async createTodo(id: string, createTodoDto: CreateTodoDto) {
@@ -44,7 +35,7 @@ export class UserService {
       relations: ['todos'],
     });
     if (!user) throw new NotFoundException('User Not Found');
-    return user;
+    return instanceToPlain(user);
   }
 
   async findTodoById(userId: string, id: string) {
