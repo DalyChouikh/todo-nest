@@ -26,7 +26,7 @@ export class UserService {
     if (!user) throw new NotFoundException('User Not Found');
     const todo = await this.todoRepository.create({ ...createTodoDto, user });
     await this.todoRepository.save(todo);
-    return todo;
+    return instanceToPlain(todo);
   }
 
   async findUserById(id: string) {
@@ -43,15 +43,16 @@ export class UserService {
     if (!user) throw new NotFoundException('User Not Found');
     const todo = await this.todoRepository.findOneBy({ id: +id, user });
     if (!todo) throw new NotFoundException('Todo not found');
-    return todo;
+    return instanceToPlain(todo);
   }
 
   async findTodoByTitle(id: string, title: string = '') {
     const user = await this.userRepository.findOneBy({ id: +id });
     if (!user) throw new NotFoundException('User Not Found');
-    return await this.todoRepository.find({
+    const todos: Todo[] = await this.todoRepository.find({
       where: { title: ILike(`${title}%`), user },
     });
+    return todos;
   }
 
   async deleteTodoById(userId: string, id: string) {
@@ -94,7 +95,8 @@ export class UserService {
       throw new NotFoundException('User Not Found');
     }
 
-    return await this.userRepository.save(user);
+    await this.userRepository.save(user);
+    return instanceToPlain(user);
   }
 
   async deleteUser(id: string) {
