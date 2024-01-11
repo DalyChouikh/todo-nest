@@ -12,6 +12,7 @@ import {
 import { UserService } from './user.service';
 import { CreateTodoDto, UpdateTodoDto, UpdateUserDto } from './dto';
 import { GetUser } from 'src/common/decorators';
+import { FilterTodosDto } from './dto/filter-todo.dto';
 
 @Controller('users')
 export class UsersController {
@@ -52,10 +53,12 @@ export class UsersController {
   findUserTodos(
     @GetUser('sub') sub: number,
     @Param('id') id: string,
-    @Query() title: { title: string } = { title: '' },
+    @Query() filterTodosDto: FilterTodosDto,
   ) {
     if (sub !== +id) throw new UnauthorizedException();
-    return this.userService.findTodoByTitle(id, title.title);
+    if (Object.keys(filterTodosDto).length)
+      return this.userService.findTodoWithFilters(id, filterTodosDto);
+    return this.userService.findUserTodos(id);
   }
 
   @Delete(':userId/todos/:id')

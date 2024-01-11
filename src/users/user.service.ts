@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Todo } from './entities/todo.entity';
 import { CreateTodoDto, UpdateTodoDto, UpdateUserDto } from './dto';
 import { hash } from 'bcrypt';
 import { instanceToPlain } from 'class-transformer';
+import { FilterTodosDto } from './dto/filter-todo.dto';
 
 @Injectable()
 export class UserService {
@@ -46,12 +47,29 @@ export class UserService {
     return instanceToPlain(todo);
   }
 
-  async findTodoByTitle(id: string, title: string = '') {
+  async findUserTodos(id: string) {
     const user = await this.userRepository.findOneBy({ id: +id });
     if (!user) throw new NotFoundException('User Not Found');
     const todos: Todo[] = await this.todoRepository.find({
-      where: { title: ILike(`${title}%`), user },
+      where: { user },
     });
+    return todos;
+  }
+
+  async findTodoWithFilters(id: string, filterTodosDto: FilterTodosDto) {
+    const user = await this.userRepository.findOneBy({ id: +id });
+    if (!user) throw new NotFoundException('User Not Found');
+    const { title, status } = filterTodosDto;
+    const todos = await this.findUserTodos(id);
+    if (status) {
+      return todos.filter((todo) => todo.status === status);
+    }
+    if (title) {
+      return todos.filter(
+        (todo) =>
+          todo.title.includes(title) || todo.description.includes(title),
+      );
+    }
     return todos;
   }
 
