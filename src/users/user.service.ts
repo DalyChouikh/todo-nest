@@ -60,12 +60,12 @@ export class UserService {
     const user = await this.userRepository.findOneBy({ id: +id });
     if (!user) throw new NotFoundException('User Not Found');
     const { title, status } = filterTodosDto;
-    const todos = await this.findUserTodos(id);
+    let todos = await this.findUserTodos(id);
     if (status) {
-      return todos.filter((todo) => todo.status === status);
+      todos = todos.filter((todo) => todo.status === status);
     }
     if (title) {
-      return todos.filter(
+      todos = todos.filter(
         (todo) =>
           todo.title.includes(title) || todo.description.includes(title),
       );
