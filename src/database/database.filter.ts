@@ -18,7 +18,7 @@ export class DatabaseFilter implements ExceptionFilter {
       )
     ) {
       const errorResponse = {
-        statusCode: HttpStatus.BAD_REQUEST,
+        statusCode: HttpStatus.CONFLICT,
         message: 'Username already exists',
       };
 
